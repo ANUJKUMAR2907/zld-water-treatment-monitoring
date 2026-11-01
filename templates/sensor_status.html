@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sensor Status | ZLD Monitoring</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-icon">Z</div>
+        <div>
+          <h1>ZLD Monitoring</h1>
+          <p>Sensor connection and health status</p>
+        </div>
+      </div>
+      <nav class="nav-menu" aria-label="Main navigation">
+        <a href="/">Dashboard</a>
+        <a href="/sensor-status" aria-current="page">Sensor Status</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="panel hero-panel">
+        <div class="hero-header">
+          <div>
+            <span class="eyebrow">Hardware diagnostics</span>
+            <h2>Sensor connection status</h2>
+          </div>
+          <div class="status-group">
+            <span id="statusModeBadge" class="status-badge offline">Checking...</span>
+            <span class="meta-text">Last update: <strong id="statusUpdateTime">--</strong></span>
+          </div>
+        </div>
+        <p class="status-help">
+          This page shows the latest status reported by the ESP device. “Unknown” means the
+          hardware cannot confirm its connection, while “Not configured” means no driver or
+          reading code has been added yet.
+        </p>
+      </section>
+
+      <section class="sensor-status-grid" aria-label="Sensor status cards">
+        {% for sensor in [
+          ("ph", "pH sensor (not connected)", "pH", "phValue"),
+          ("turbidity", "Turbidity sensor", "Raw ADC", "turbidityValue"),
+          ("inlet_flow", "Inlet flow sensor", "L/min", "inletFlowValue"),
+          ("recovery_flow", "Recovery flow sensor", "L/min", "recoveryFlowValue"),
+          ("reject_flow", "Reject flow sensor", "L/min", "rejectFlowValue"),
+          ("water_level", "Ultrasonic level sensor", "cm", "waterLevelValue")
+        ] %}
+        <article class="sensor-status-card">
+          <div class="sensor-card-icon">●</div>
+          <div class="sensor-card-content">
+            <h3>{{ sensor[1] }}</h3>
+            <p>Latest reading: <strong id="{{ sensor[3] }}">--</strong> {{ sensor[2] }}</p>
+          </div>
+          <span id="{{ sensor[0] }}Status" class="sensor-status-badge unknown">Unknown</span>
+        </article>
+        {% endfor %}
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <h3>Sensor status details</h3>
+          <span id="sensorCountText" class="mini-badge">--</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sensor</th>
+                <th>Status</th>
+                <th>Latest reading</th>
+                <th>Unit</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="statusTableBody">
+              <tr><td colspan="5">Loading sensor status...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='sensor_status.js') }}"></script>
+  </body>
+</html>
